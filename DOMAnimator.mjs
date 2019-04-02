@@ -101,12 +101,11 @@ export default class DOMAnimatorNode {
         this.to = to
         this.state = new State()
         this.animator = new Animator()
-        console.log(this.property)
+        console.log(this.cb)
     }
 
     update() {
         this.cb(this.from + (this.to - this.from) * this.state.scale)
-        console.log(this.property)
     }
 
     start() {
