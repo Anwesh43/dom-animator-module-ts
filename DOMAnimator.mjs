@@ -18,6 +18,7 @@ class State {
             this.scale = this.prevScale + this.dir
             this.dir = 0
             this.prevScale = this.scale
+            cb()
         }
     }
 
@@ -47,7 +48,7 @@ class Loop {
     }
 
     start(cb) {
-        const loopObject = new LoopObject()
+        const loopObject = new LoopObject(cb)
         this.loopObjects.push(loopObject)
         if (this.loopObjects.length == 1) {
             console.log("loop started")
@@ -87,22 +88,25 @@ class Animator {
     stop() {
         if (this.animated) {
             this.animated = false
+            console.log("stopping animation")
             loop.stop(this.t)
         }
     }
 }
 
 export default class DOMAnimatorNode {
-    constructor(property, from, to) {
-        this.property = property
+    constructor(cb, from, to) {
+        this.cb = cb
         this.from = from
         this.to = to
         this.state = new State()
         this.animator = new Animator()
+        console.log(this.property)
     }
 
     update() {
-        this.property = this.from + (this.to - this.from) * this.state.scale
+        this.cb(this.from + (this.to - this.from) * this.state.scale)
+        console.log(this.property)
     }
 
     start() {
@@ -116,8 +120,8 @@ export default class DOMAnimatorNode {
         })
     }
 
-    static animate(property, from, to) {
-        const dan = new DOMAnimatorNode()
+    static animate(propertycb, from, to) {
+        const dan = new DOMAnimatorNode(propertycb, from, to)
         dan.start()
     }
 }
