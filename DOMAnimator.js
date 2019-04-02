@@ -29,19 +29,63 @@ class State {
     }
 }
 
+class LoopObject {
+    constructor(cb) {
+        this.t = new Date().getTime()
+        this.cb = cb
+    }
+
+    execute() {
+        this.cb()
+    }
+}
+
+class Loop() {
+
+    constructor() {
+        this.loopObjects = []
+    }
+
+    start(cb) {
+        const loopObject = new LoopObject()
+        this.loopObjects.push(loopObject)
+        if (this.loopObjects.length == 1) {
+            this.loop()
+        }
+        return loopObject.t
+    }
+
+    loop() {
+        this.interval = setInterval(() => {
+            this.loopObjects.forEach((loopObject) => {
+                loopObject.execute()
+            })
+        }, delay)
+    }
+
+    stop(t) {
+        this.loopObjects = this.loopObjects.filter(loopObject => loopObject.t != t)
+        if (this.loopObjects.length == 0) {
+            clearInterval(this.interval)
+        }
+    }
+}
+
+const loop = new Loop()
+
 class Animator {
 
     start(cb) {
         if (!this.animated) {
             this.animated = true
-            this.interval = setInterval(cb, 50)
+            this.t = loop.start(cb)
         }
     }
 
     stop() {
         if (this.animated) {
             this.animated = false
-            clearInterval(this.interval)
+            loop.stop(this.t)
         }
     }
 }
