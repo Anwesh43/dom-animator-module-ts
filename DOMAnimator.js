@@ -50,6 +50,7 @@ class Loop() {
         const loopObject = new LoopObject()
         this.loopObjects.push(loopObject)
         if (this.loopObjects.length == 1) {
+            console.log("loop started")
             this.loop()
         }
         return loopObject.t
@@ -67,6 +68,7 @@ class Loop() {
         this.loopObjects = this.loopObjects.filter(loopObject => loopObject.t != t)
         if (this.loopObjects.length == 0) {
             clearInterval(this.interval)
+            console.log("loop stopped")
         }
     }
 }
@@ -87,5 +89,30 @@ class Animator {
             this.animated = false
             loop.stop(this.t)
         }
+    }
+}
+
+class DOMAnimatorNode {
+    constructor(property, from, to) {
+        this.property = property
+        this.from = from
+        this.to = to
+        this.state = new State()
+        this.animator = new Animator()
+    }
+
+    update() {
+        this.property = this.from + (this.to - this.from) * this.state.scale
+    }
+
+    start() {
+        this.state.startUpdating(() => {
+            this.animator.start(() => {
+                this.update()
+                this.state.update(() => {
+                    this.animator.stop()
+                })
+            })
+        })
     }
 }
