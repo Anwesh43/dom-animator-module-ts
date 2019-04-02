@@ -92,7 +92,7 @@ class Animator {
     }
 }
 
-class DOMAnimatorNode {
+export default class DOMAnimatorNode {
     constructor(property, from, to) {
         this.property = property
         this.from = from
@@ -114,5 +114,10 @@ class DOMAnimatorNode {
                 })
             })
         })
+    }
+
+    static animate(property, from, to) {
+        const dan = new DOMAnimatorNode()
+        dan.start()
     }
 }
